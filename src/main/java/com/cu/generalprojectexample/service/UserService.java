@@ -1,10 +1,15 @@
 package com.cu.generalprojectexample.service;
 
 
+import com.cu.generalprojectexample.dto.UserDto;
+import com.cu.generalprojectexample.model.Authority;
 import com.cu.generalprojectexample.model.User;
 import com.cu.generalprojectexample.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -12,7 +17,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
-public class UserService/* implements UserDetailsService */{
+public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -25,6 +30,9 @@ public class UserService/* implements UserDetailsService */{
 
     public User findById(int id) {
         return userRepository.findById(id).get();
+    }
+    public User findByUserName(String userName){
+        return userRepository.findByUserName(userName);
     }
 
     public User save(User user) {
@@ -49,31 +57,31 @@ public class UserService/* implements UserDetailsService */{
     }
 
 
-   /* @Override
+   @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findById(username);
-        UserDTO us= convertirEntidadADto(user);
+        User user = findByUserName(username);
+        UserDto us= convertirEntidadADto(user);
         if(user!=null){
-            User.UserBuilder userBuilder= User.withUsername(username);
-            userBuilder.password("{noop}"+us.getPassword()).roles(convertirListaEnArray(us.getAuthorities()));
+            org.springframework.security.core.userdetails.User.UserBuilder userBuilder= org.springframework.security.core.userdetails.User.withUsername(username);
+            userBuilder.password("{noop}"+us.getPassword()).roles(convertirListaEnArray(us.getAuthorityList()));
             return userBuilder.build();
         }else{
             throw  new UsernameNotFoundException(username);
         }
     }
-    private UserDTO convertirEntidadADto(User user_entidad) {
-        UserDTO userDto = new UserDTO(user_entidad);
-        userDto.setAuthorities(authoritiesService.findByUsername(user_entidad.getUsername()));
+    private UserDto convertirEntidadADto(User user_entidad) {
+        UserDto userDto = new UserDto(user_entidad);
+        userDto.setAuthorityList(authoritiesService.findByUserId(user_entidad.getId()));
         return userDto;
     }
-    private String[] convertirListaEnArray(List<Authorities> list){
+    private String[] convertirListaEnArray(List<Authority> list){
         String[] ed=new String[list.size()];
         for (int i = 0; i < list.size(); i++) {
-            ed[i]=list.get(i).getAuthoritiesPK().getAuthority();
+            ed[i]=list.get(i).getAuthorityPK().getAuthority();
         }
         return ed;
     }
-*/
+
     public boolean existByUsername(int username) {
         return userRepository.existsById(username);
     }

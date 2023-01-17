@@ -17,7 +17,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 @RestController
-@RequestMapping("/public/User")
+@RequestMapping("/User")
 public class UserController {
     @Autowired
     private UserService userService;
